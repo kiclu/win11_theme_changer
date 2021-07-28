@@ -1,10 +1,12 @@
 // windows 11 theme changer
-// version: 1.1
+// version: 1.2
 
 #include<bits/stdc++.h>
 #include<math.h>
 #include<unistd.h>
 #include<windows.h>
+
+bool verbose = false;
 
 struct Date{
     int day, month, year;
@@ -90,6 +92,8 @@ public:
     Time get_noon_utc() const { return m_noon; }
     Time get_sunrise_utc() const { return m_sunrise; }
     Time get_sunset_utc() const { return m_sunset; }
+
+    void debug_out();
 private:
     Date m_date;                // 
     Coord m_coord;              // 
@@ -148,19 +152,21 @@ inline void SunData::m_get_sunset(){
 }
 
 void SunData::m_init(){
-    printf("init\n");
     m_get_fract();
-    printf("fract = %lf\n", m_fract);
     m_get_eqtime();
-    printf("eqtime = %lf\n", m_eqtime);
     m_get_decl();
-    printf("decl = %lf\n", m_decl);
     m_get_hour_angle();
-    printf("hour angle = %lf\n", m_ha);
-    //m_get_noon();
     m_get_sunrise();
-    printf("sunrise = %02d:%02d\n", m_sunrise.hr, m_sunrise.mn);
     m_get_sunset();
+    if(verbose) debug_out();
+}
+
+void SunData::debug_out(){
+    printf("fract = %lf\n", m_fract);
+    printf("eqtime = %lf\n", m_eqtime);
+    printf("decl = %lf\n", m_decl);
+    printf("hour angle = %lf\n", m_ha);
+    printf("sunrise = %02d:%02d\n", m_sunrise.hr, m_sunrise.mn);
     printf("sunset = %02d:%02d\n", m_sunset.hr, m_sunset.mn);
 }
 
@@ -170,13 +176,13 @@ enum State{
 };
 
 void change_theme(State theme){
-    printf("CHANGE THEME | %02d:%02d\n", now_utc().hr, now_utc().mn);
+    if(verbose) printf("CHANGE THEME | %02d:%02d\n", now_utc().hr, now_utc().mn);
     if(theme == light){
-        printf("LIGHT\n");
+        if(verbose) printf("LIGHT\n");
         system("powershell New-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize -Name SystemUsesLightTheme -Value 1 -Type Dword -Force; New-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize -Name AppsUseLightTheme -Value 1 -Type Dword -Force");
     }
     if(theme == dark){
-        printf("DARK");
+        if(verbose) printf("DARK\n");
         system("powershell New-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize -Name SystemUsesLightTheme -Value 0 -Type Dword -Force; New-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize -Name AppsUseLightTheme -Value 0 -Type Dword -Force");
     }
 }
@@ -190,7 +196,7 @@ Coord read_config(){
     f_in >> coord.lat >> coord.lon;
     f_in.close();
 
-    std::cout << coord.lat << " " << coord.lon << std::endl;
+    if(verbose) std::cout << coord.lat << " " << coord.lon << std::endl;
     return {coord.lat, coord.lon};
 }
 
@@ -204,8 +210,17 @@ void ShowConsole()
     ::ShowWindow(::GetConsoleWindow(), SW_SHOW);
 }
 
-int main(){
-    HideConsole();
+void cli_arg_parse(int argc, char* argv[]){
+    if(argc > 0){
+        for(int i = 0; i < argc; ++i){
+            if(!strcmp(argv[i], "--verbose")) verbose = true;
+        }
+    }
+}
+
+int main(int argc, char* argv[]){
+    cli_arg_parse(argc, argv);
+    if(!verbose) HideConsole();
 
     Coord here = read_config();
     SunData data(here);
