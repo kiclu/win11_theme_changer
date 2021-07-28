@@ -1,4 +1,5 @@
 // windows 11 theme changer
+// version: 1.1
 
 #include<bits/stdc++.h>
 #include<math.h>
@@ -147,13 +148,20 @@ inline void SunData::m_get_sunset(){
 }
 
 void SunData::m_init(){
+    printf("init\n");
     m_get_fract();
+    printf("fract = %lf\n", m_fract);
     m_get_eqtime();
+    printf("eqtime = %lf\n", m_eqtime);
     m_get_decl();
+    printf("decl = %lf\n", m_decl);
     m_get_hour_angle();
-    m_get_noon();
+    printf("hour angle = %lf\n", m_ha);
+    //m_get_noon();
     m_get_sunrise();
+    printf("sunrise = %02d:%02d\n", m_sunrise.hr, m_sunrise.mn);
     m_get_sunset();
+    printf("sunset = %02d:%02d\n", m_sunset.hr, m_sunset.mn);
 }
 
 enum State{
@@ -183,7 +191,7 @@ Coord read_config(){
     f_in.close();
 
     std::cout << coord.lat << " " << coord.lon << std::endl;
-    return coord;
+    return {coord.lat, coord.lon};
 }
 
 void HideConsole()
@@ -215,7 +223,7 @@ int main(){
             change_theme(curr_state);
         }
 
-        Sleep(120000);
+        Sleep(10000);
     }
 
     return 0;
