@@ -1,5 +1,5 @@
 // windows 11 theme changer
-// version: 1.2
+// version: 1.3
 
 #include<bits/stdc++.h>
 #include<math.h>
@@ -237,8 +237,7 @@ int main(int argc, char* argv[]){
             curr_state = tmp;
             change_theme(curr_state);
         }
-
-        Sleep(10000);
+        Sleep(30); // sleep 30ms
     }
 
     return 0;
