@@ -1,5 +1,5 @@
 // windows 11 theme changer
-// version: 1.3
+// version: 1.4
 
 #include<bits/stdc++.h>
 #include<math.h>
@@ -218,12 +218,25 @@ void cli_arg_parse(int argc, char* argv[]){
     }
 }
 
+void log(const SunData& t_data){
+    std::ofstream log("theme_changer.log");
+    log << "THEME CHANGER LOG ";
+    log << std::setfill('0') << std::setw(2) << now_utc().hr << ":" << now_utc().mn << " (GMT+0)\n";
+    log << "SUNRISE: ";
+    log << std::setfill('0') << std::setw(2) << t_data.get_sunrise_utc().hr << ":" << t_data.get_sunrise_utc().mn << " (GMT+0)\n";
+    log << "SUNSET: ";
+    log << std::setfill('0') << std::setw(2) << t_data.get_sunset_utc().hr << ":" << t_data.get_sunset_utc().mn << " (GMT+0)\n";
+    log.close();
+}
+
 int main(int argc, char* argv[]){
     cli_arg_parse(argc, argv);
     if(!verbose) HideConsole();
 
     Coord here = read_config();
     SunData data(here);
+
+    log(data);
 
     Time sunrise = data.get_sunrise_utc();
     Time sunset = data.get_sunset_utc();
@@ -237,7 +250,7 @@ int main(int argc, char* argv[]){
             curr_state = tmp;
             change_theme(curr_state);
         }
-        Sleep(30); // sleep 30ms
+        Sleep(1000); // sleep 1000ms
     }
 
     return 0;
