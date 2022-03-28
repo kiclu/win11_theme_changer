@@ -185,6 +185,7 @@ void change_theme(State theme){
         if(verbose) printf("DARK\n");
         system("powershell New-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize -Name SystemUsesLightTheme -Value 0 -Type Dword -Force; New-ItemProperty -Path HKCU:\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize -Name AppsUseLightTheme -Value 0 -Type Dword -Force");
     }
+	system("taskkill /F /IM explorer.exe & start explorer");
 }
 
 Coord read_config(){
